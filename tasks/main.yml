@@ -1,9 +1,4 @@
 ---
-- name: "Create download directory"
-  file:
-    path: "{{ golang_download_dir }}"
-    state: directory
-
 - name: "Create golang install directories"
   file:
     path: "{{ golang_install_dir }}"
@@ -14,5 +9,18 @@
 - name: "Download and unarchive golang package"
   unarchive:
     remote_src: yes
-    dest: "{{ golang_download_dir }}"
+    dest: "{{ golang_install_dir }}"
     src: "{{ golang_url }}"
+
+- name: "Check /etc/profile.d exists"
+  file:
+    path: "/etc/profile.d"
+    state: directory
+
+- name: "Add /usr/local/go/bin to the PATH environment variable"
+  template:
+    src: golang.sh.j2
+    dest: "/etc/profile.d/golang.sh"
+    owner: root
+    group: root
+    mode: "644" 
